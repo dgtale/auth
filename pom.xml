@@ -31,6 +31,10 @@
 		<module>auth-ejb</module>
 		<module>auth-web</module>
 		<module>auth-ear</module>
+<!-- 		<module>auth-entity</module> -->
+<!-- 		<module>auth-dao</module> -->
+		<module>auth-service</module>
+		<module>auth-dto</module>
 	</modules>
 
 	<properties>
@@ -44,12 +48,13 @@
 
 		<!-- JBoss dependency versions -->
 
-		<version.wildfly.maven.plugin>1.2.0.Alpha</version.wildfly.maven.plugin>
+		<version.wildfly.maven.plugin>1.2.0.Alpha4</version.wildfly.maven.plugin>
 
 		<!-- Define the version of the JBoss BOMs we want to import to specify 
 			tested stacks. -->
 		<version.jboss.bom>8.2.2.Final</version.jboss.bom>
 		<version.wildfly>10.1.0.Final</version.wildfly>
+		<version.wildfly.cli>10.1.0.Final</version.wildfly.cli>
 
 		<!-- other plugin versions -->
 		<version.compiler.plugin>3.1</version.compiler.plugin>
@@ -69,18 +74,37 @@
 
 	<dependencyManagement>
 		<dependencies>
-
-			<!-- Define the version of the EJB jar so that we don't need to repeat 
-				ourselves in every module -->
+			<!-- Define the version of the modules so that we don't need to repeat ourselves in every module -->
+			<dependency>
+				<groupId>com.dg.sample</groupId>
+				<artifactId>auth-dto</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+			</dependency>
 			<dependency>
 				<groupId>com.dg.sample</groupId>
 				<artifactId>auth-ejb</artifactId>
 				<version>${project.version}</version>
 				<type>ejb</type>
 			</dependency>
-
-			<!-- Define the version of the WAR so that we don't need to repeat ourselves 
-				in every module -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>com.dg.sample</groupId> -->
+<!-- 				<artifactId>auth-entity</artifactId> -->
+<!-- 				<version>${project.version}</version> -->
+<!-- 				<type>ejb</type> -->
+<!-- 			</dependency> -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>com.dg.sample</groupId> -->
+<!-- 				<artifactId>auth-dao</artifactId> -->
+<!-- 				<version>${project.version}</version> -->
+<!-- 				<type>ejb</type> -->
+<!-- 			</dependency> -->
+			<dependency>
+				<groupId>com.dg.sample</groupId>
+				<artifactId>auth-service</artifactId>
+				<version>${project.version}</version>
+				<type>ejb</type>
+			</dependency>
 			<dependency>
 				<groupId>com.dg.sample</groupId>
 				<artifactId>auth-web</artifactId>
@@ -122,6 +146,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.wildfly/wildfly-client-all -->
+			<dependency>
+			    <groupId>org.wildfly</groupId>
+			    <artifactId>wildfly-client-all</artifactId>
+			    <version>${version.wildfly.cli}</version>
+			</dependency>
+
 
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>

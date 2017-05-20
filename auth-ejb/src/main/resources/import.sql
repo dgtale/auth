@@ -16,4 +16,5 @@
 --
 
 -- You can use this file to load seed data into the database using SQL statements
-insert into Registrant(id, name, email, phone_number) values (0, 'John Smith', 'john.smith@mailinator.com', '2125551212') 
+-- insert into Registrant(id, name, email, phone_number) values (0, 'John Smith', 'john.smith@mailinator.com', '2125551212') 
+insert into ACCOUNTS(acct_id, acct_uuid, acct_email, acct_password, acct_role) values (1, 'AA', 'dgtale@hotmail.com', '1D#asdfasdfasdf', 'User')

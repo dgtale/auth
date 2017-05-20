@@ -40,6 +40,21 @@
     </licenses>
 
     <dependencies>
+      <dependency>
+         <groupId>com.dg.sample</groupId>
+         <artifactId>auth-dto</artifactId>
+         <type>jar</type>
+      </dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.dg.sample</groupId> -->
+<!-- 			<artifactId>auth-entity</artifactId> -->
+<!-- 			<type>ejb</type> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.dg.sample</groupId> -->
+<!-- 			<artifactId>auth-dao</artifactId> -->
+<!-- 			<type>ejb</type> -->
+<!-- 		</dependency> -->
 
         <!-- Declare the APIs we depend on and need for compilation. All of 
             them are provided by JBoss WildFly -->
