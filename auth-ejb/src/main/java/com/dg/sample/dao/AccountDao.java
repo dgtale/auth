@@ -13,6 +13,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import com.dg.sample.entity.user.Account;
+import com.dg.sample.entity.user.Role;
 
 @Stateless
 public class AccountDao {
@@ -20,6 +21,7 @@ public class AccountDao {
 	@Inject
 	private EntityManager em;
 
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public Account findById(Long id) {
 		return em.find(Account.class, id);
 	}
@@ -60,6 +62,7 @@ public class AccountDao {
 		Account account = new Account();
 		account.setEmail(email);
 		account.setPassword(password);
+		account.setRole(Role.User);
 
 		em.persist(account);
 

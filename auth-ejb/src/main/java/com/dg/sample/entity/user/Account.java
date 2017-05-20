@@ -33,6 +33,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.dg.sample.constant.MessageCode;
 import com.dg.sample.entity.AbstractEntity;
 
 @Entity
@@ -54,7 +55,7 @@ public class Account extends AbstractEntity {
 
 	@NotNull
 	@NotEmpty
-	@Email(message = "USR002")
+	@Email(message = MessageCode.USR001)
 	@Column(name = ALIAS + "email")
 	private String email;
 
@@ -90,8 +91,8 @@ public class Account extends AbstractEntity {
 	 * </pre>
 	 */
 	@NotNull
-	@Size(min = 8, message = "USR003")
-	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "USR003")
+	@Size(min = 8, message = MessageCode.USR002)
+	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = MessageCode.USR003)
 	@Column(name = ALIAS + "password")
 	private String password;
 

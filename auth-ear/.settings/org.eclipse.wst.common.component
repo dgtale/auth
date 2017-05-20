@@ -2,6 +2,9 @@
     <wb-module deploy-name="auth-ear">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/ear-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/application" tag="defaultRootSource"/>
+        <dependent-module archiveName="auth-lib.jar" deploy-path="/lib" handle="module:/resource/auth-lib/auth-lib">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="auth-dto.jar" deploy-path="/lib" handle="module:/resource/auth-dto/auth-dto">
             <dependency-type>uses</dependency-type>
         </dependent-module>

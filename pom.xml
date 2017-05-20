@@ -28,13 +28,12 @@
 	</licenses>
 
 	<modules>
+		<module>auth-lib</module>
+		<module>auth-dto</module>
+		<module>auth-service</module>
 		<module>auth-ejb</module>
 		<module>auth-web</module>
 		<module>auth-ear</module>
-<!-- 		<module>auth-entity</module> -->
-<!-- 		<module>auth-dao</module> -->
-		<module>auth-service</module>
-		<module>auth-dto</module>
 	</modules>
 
 	<properties>
@@ -75,6 +74,12 @@
 	<dependencyManagement>
 		<dependencies>
 			<!-- Define the version of the modules so that we don't need to repeat ourselves in every module -->
+			<dependency>
+				<groupId>com.dg.sample</groupId>
+				<artifactId>auth-lib</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+			</dependency>
 			<dependency>
 				<groupId>com.dg.sample</groupId>
 				<artifactId>auth-dto</artifactId>

@@ -68,7 +68,6 @@ public class AccountRest {
 
 			accountService.register(entity);
 
-			// Create an "ok" response
 			builder = Response.ok();
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues
@@ -93,12 +92,18 @@ public class AccountRest {
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response login() {
+	public Response login(@FormParam("email") String email, @FormParam("password") String password) {
 		Response.ResponseBuilder builder = null;
-		//		builder = Response.ok();
 
+		Account entity = new Account();
+		entity.setEmail(email);
+		entity.setPassword(password);
+		
+		Account account = accountService.findByEmail(email);
+		
 		//		{"error":"invalid_grant","error_description":"The user is locked because of too many wrong passwords attempts. please contact the administrator."}
 		Map<String, String> responseObj = new HashMap<>();
+		if (account != null) {
 		responseObj.put("access_token", "KuAmYgLk6H1D");
 		responseObj.put("token_type", "bearer");
 		responseObj.put("expires_in", "86399");
@@ -109,6 +114,10 @@ public class AccountRest {
 		responseObj.put("lastName", "b");
 		responseObj.put("fullName", "a b");
 		responseObj.put("accountId", "1");
+		} else {
+			responseObj.put("error", "invalid_grant");
+			responseObj.put("error_description", "The user is not approved for this app.");
+		}
 
 		builder = Response.status(Response.Status.OK).entity(responseObj);
 
