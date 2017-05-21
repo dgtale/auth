@@ -57,6 +57,17 @@
 			<artifactId>jaxrs-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson2-provider</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.resteasy</groupId> -->
+		<!-- <artifactId>resteasy-jackson-provider</artifactId> -->
+		<!-- <scope>pom</scope> -->
+		<!-- </dependency> -->
 
 		<!-- Import the CDI API, we use provided scope as the API is included in 
 			JBoss WildFly -->

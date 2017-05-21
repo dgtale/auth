@@ -54,6 +54,7 @@
 		<version.jboss.bom>8.2.2.Final</version.jboss.bom>
 		<version.wildfly>10.1.0.Final</version.wildfly>
 		<version.wildfly.cli>10.1.0.Final</version.wildfly.cli>
+		<resteasy-jackson2-provider.version>3.1.2.Final</resteasy-jackson2-provider.version>
 
 		<!-- other plugin versions -->
 		<version.compiler.plugin>3.1</version.compiler.plugin>
@@ -73,7 +74,8 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- Define the version of the modules so that we don't need to repeat ourselves in every module -->
+			<!-- Define the version of the modules so that we don't need to repeat 
+				ourselves in every module -->
 			<dependency>
 				<groupId>com.dg.sample</groupId>
 				<artifactId>auth-lib</artifactId>
@@ -92,18 +94,18 @@
 				<version>${project.version}</version>
 				<type>ejb</type>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>com.dg.sample</groupId> -->
-<!-- 				<artifactId>auth-entity</artifactId> -->
-<!-- 				<version>${project.version}</version> -->
-<!-- 				<type>ejb</type> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>com.dg.sample</groupId> -->
-<!-- 				<artifactId>auth-dao</artifactId> -->
-<!-- 				<version>${project.version}</version> -->
-<!-- 				<type>ejb</type> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>com.dg.sample</groupId> -->
+			<!-- <artifactId>auth-entity</artifactId> -->
+			<!-- <version>${project.version}</version> -->
+			<!-- <type>ejb</type> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>com.dg.sample</groupId> -->
+			<!-- <artifactId>auth-dao</artifactId> -->
+			<!-- <version>${project.version}</version> -->
+			<!-- <type>ejb</type> -->
+			<!-- </dependency> -->
 			<dependency>
 				<groupId>com.dg.sample</groupId>
 				<artifactId>auth-service</artifactId>
@@ -136,6 +138,14 @@
 				<scope>runtime</scope>
 			</dependency>
 
+			<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-jackson2-provider -->
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-jackson2-provider</artifactId>
+				<version>${resteasy-jackson2-provider.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
 			<!-- JBoss distributes a complete set of Java EE 7 APIs including a Bill 
 				of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
 				of artifacts. We use this here so that we always get the correct versions 
@@ -153,9 +163,9 @@
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.wildfly/wildfly-client-all -->
 			<dependency>
-			    <groupId>org.wildfly</groupId>
-			    <artifactId>wildfly-client-all</artifactId>
-			    <version>${version.wildfly.cli}</version>
+				<groupId>org.wildfly</groupId>
+				<artifactId>wildfly-client-all</artifactId>
+				<version>${version.wildfly.cli}</version>
 			</dependency>
 
 

@@ -5,6 +5,12 @@
         <dependent-module archiveName="auth-lib.jar" deploy-path="/lib" handle="module:/resource/auth-lib/auth-lib">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="argon2-jvm.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/de/mkammerer/argon2-jvm/2.2/argon2-jvm-2.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jna.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/net/java/dev/jna/jna/4.2.1/jna-4.2.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="auth-dto.jar" deploy-path="/lib" handle="module:/resource/auth-dto/auth-dto">
             <dependency-type>uses</dependency-type>
         </dependent-module>

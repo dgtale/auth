@@ -27,14 +27,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.dg.sample.constant.MessageCode;
 import com.dg.sample.entity.AbstractEntity;
+import com.dg.sample.i18.MessageCode;
 
 @Entity
 @Table(name = Account.TABLE, uniqueConstraints = @UniqueConstraint(columnNames = Account.ALIAS + "email"))
@@ -76,23 +74,8 @@ public class Account extends AbstractEntity {
 	@Column(name = ALIAS + "updated")
 	private Date updated;
 
-	/**
-	 * Password hash
-	 * 
-	 * <pre>
-	 * ^                 # start-of-string
-	 * (?=.*[0-9])       # a digit must occur at least once
-	 * (?=.*[a-z])       # a lower case letter must occur at least once
-	 * (?=.*[A-Z])       # an upper case letter must occur at least once
-	 * (?=.*[@#$%^&+=])  # a special character must occur at least once
-	 * (?=\S+$)          # no whitespace allowed in the entire string
-	 * .{8,}             # anything, at least eight places though
-	 * $                 # end-of-string
-	 * </pre>
-	 */
 	@NotNull
-	@Size(min = 8, message = MessageCode.USR002)
-	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = MessageCode.USR003)
+	@NotEmpty
 	@Column(name = ALIAS + "password")
 	private String password;
 
