@@ -64,7 +64,7 @@
 		<version.war.plugin>2.5</version.war.plugin>
 
 		<argon2-version>2.2</argon2-version>
-		<version.java-jwt>3.2.0</version.java-jwt>
+		<jwt-version>0.7.0</jwt-version>
 		<cache2k-version>1.0.0.CR4</cache2k-version>
 
 		<!-- maven-compiler-plugin -->
@@ -124,6 +124,11 @@
 				<groupId>de.mkammerer</groupId>
 				<artifactId>argon2-jvm</artifactId>
 				<version>${argon2-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt</artifactId>
+				<version>${jwt-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.cache2k</groupId>

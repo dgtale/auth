@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 
 import com.dg.sample.entity.user.Account;
 import com.dg.sample.entity.user.Role;
+import com.dg.sample.entity.user.User;
 
 @Stateless
 public class AccountDao {
@@ -56,6 +57,11 @@ public class AccountDao {
 
 	public void create(Account account) throws Exception {
 		em.persist(account);
+
+		User user = new User();
+		user.setId(account.getId());
+
+		em.persist(user);
 	}
 
 	public Account create(String email, String password) throws Exception {

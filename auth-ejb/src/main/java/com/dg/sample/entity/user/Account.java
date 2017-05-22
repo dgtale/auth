@@ -18,12 +18,16 @@ package com.dg.sample.entity.user;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -63,10 +67,10 @@ public class Account extends AbstractEntity {
 	private Role role;
 
 	@Column(name = ALIAS + "approved")
-	private Boolean approved;
+	private Boolean approved = Boolean.FALSE;
 
 	@Column(name = ALIAS + "ready")
-	private Boolean ready;
+	private Boolean ready = Boolean.FALSE;
 
 	@Column(name = ALIAS + "created")
 	private Date created;
@@ -78,6 +82,10 @@ public class Account extends AbstractEntity {
 	@NotEmpty
 	@Column(name = ALIAS + "password")
 	private String password;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinColumn(name = Account.ALIAS + "id", referencedColumnName = User.ALIAS + "id", insertable = true, updatable = false)
+	private User user;
 
 	/**
 	 * @return the id
@@ -203,6 +211,20 @@ public class Account extends AbstractEntity {
 	 */
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	/**
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
+
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

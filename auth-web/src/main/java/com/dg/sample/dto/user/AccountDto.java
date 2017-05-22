@@ -1,4 +1,4 @@
-package com.dg.sample.dto;
+package com.dg.sample.dto.user;
 
 import java.io.Serializable;
 
@@ -7,13 +7,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.dg.sample.entity.user.Account;
 
 @XmlRootElement(name = "Account")
+@SuppressWarnings("serial")
 public class AccountDto implements Serializable {
 
-	/** Default value included to remove warning. Remove or modify at will. **/
-	private static final long serialVersionUID = 1L;
-
 	private String email;
-	private String password;
+	private UserDto user;
 
 	public AccountDto() {
 	}
@@ -21,6 +19,7 @@ public class AccountDto implements Serializable {
 	public AccountDto(final Account entity) {
 		if (entity != null) {
 			this.email = entity.getEmail();
+			this.user = new UserDto(entity.getUser());
 		}
 	}
 
@@ -39,17 +38,17 @@ public class AccountDto implements Serializable {
 	}
 
 	/**
-	 * @return the password
+	 * @return the user
 	 */
-	public String getPassword() {
-		return password;
+	public UserDto getUser() {
+		return user;
 	}
 
 	/**
-	 * @param password the password to set
+	 * @param user the user to set
 	 */
-	public void setPassword(String password) {
-		this.password = password;
+	public void setUser(UserDto user) {
+		this.user = user;
 	}
 
 }

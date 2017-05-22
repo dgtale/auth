@@ -1,11 +1,8 @@
 package com.dg.sample.rest.user;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -24,6 +21,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.dg.sample.annotation.Secured;
+import com.dg.sample.dto.user.CredentialsDto;
 import com.dg.sample.entity.user.Account;
 import com.dg.sample.entity.user.Role;
 import com.dg.sample.i18.MessageCode;
@@ -32,14 +31,10 @@ import com.dg.sample.rest.ResponseMessage;
 import com.dg.sample.rest.ResponseUtil;
 import com.dg.sample.service.AccountService;
 import com.dg.sample.util.AuthUtil;
-import com.dg.sample.validator.NewAccount;
 
 @Path("/accounts")
 @RequestScoped
-public class AccountRest {
-
-	@Inject
-	private Logger log;
+public class AccountRegistrationRest {
 
 	@Inject
 	private Validator validator;
@@ -51,6 +46,7 @@ public class AccountRest {
 	private AccountService accountService;
 
 	@GET
+	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Account> test() {
 		return accountService.findAllOrderedByEmail();
@@ -64,36 +60,38 @@ public class AccountRest {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createAccount(@FormParam("email") String email, @FormParam("password") String password,
+	public Response createAccount(@FormParam("username") String username, @FormParam("password") String password,
 			@Context HttpHeaders headers) {
 
+		ResponseMessage responseMessage = null;
 		Response.ResponseBuilder builder = null;
 
 		try {
 			// Validates account using bean validation
-			NewAccount newAccount = new NewAccount();
-			newAccount.setEmail(email);
-			newAccount.setPassword(password);
+			CredentialsDto credentials = new CredentialsDto();
+			credentials.setUsername(username);
+			credentials.setPassword(password);
 
-			validateAccount(newAccount, true);
+			validateAccount(credentials);
 
-			accountService.register(toEntity(newAccount));
+			accountService.register(toEntity(credentials));
 
-			builder = Response.ok();
+			responseMessage = responseUtil.createResponseMessage(MessageCode.USR111, TextUtil.getLocale(headers.getAcceptableLanguages()));
+			builder = Response.status(Response.Status.OK).entity(responseMessage);
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues, JAX-RS response containing all
 			// violations
-			ResponseMessage responseMessage = responseUtil.createViolationMessage(MessageCode.USR100, ce.getConstraintViolations(),
+			responseMessage = responseUtil.createViolationMessage(MessageCode.USR100, ce.getConstraintViolations(),
 					TextUtil.getLocale(headers.getAcceptableLanguages()));
 			builder = Response.status(Response.Status.BAD_REQUEST).entity(responseMessage);
 		} catch (ValidationException e) {
 			// Handle the unique constrain violation
-			ResponseMessage responseMessage = responseUtil.createResponseMessage(e.getMessage(),
+			responseMessage = responseUtil.createResponseMessage(e.getMessage(),
 					TextUtil.getLocale(headers.getAcceptableLanguages()));
 			builder = Response.status(Response.Status.CONFLICT).entity(responseMessage);
 		} catch (Exception e) {
 			// Handle generic exceptions
-			ResponseMessage responseMessage = responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(),
+			responseMessage = responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(),
 					TextUtil.getLocale(headers.getAcceptableLanguages()));
 			builder = Response.status(Response.Status.BAD_REQUEST).entity(responseMessage);
 		}
@@ -101,67 +99,14 @@ public class AccountRest {
 		return builder.build();
 	}
 
-	private Account toEntity(NewAccount newAccount) {
-		Account entity = new Account();
-		entity.setEmail(newAccount.getEmail());
-		entity.setPassword(AuthUtil.passwordHash(newAccount.getPassword().toCharArray()));
-		entity.setRole(Role.User);
-		return entity;
-	}
+	private Account toEntity(CredentialsDto credentials) {
+		Account account = new Account();
 
-	@POST
-	@Path("/login")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(@FormParam("email") String email, @FormParam("password") String password,
-			@Context HttpHeaders headers) {
-		Response.ResponseBuilder builder = null;
+		account.setEmail(credentials.getUsername());
+		account.setPassword(AuthUtil.passwordHash(credentials.getPassword().toCharArray()));
+		account.setRole(Role.User);
 
-		try {
-			// Validates account using bean validation
-			NewAccount newAccount = new NewAccount();
-			newAccount.setEmail(email);
-			newAccount.setPassword(password);
-
-			validateAccount(newAccount, false);
-		} catch (ConstraintViolationException ce) {
-			// Handle bean validation issues, JAX-RS response containing all
-			// violations
-			ResponseMessage responseMessage = responseUtil.createViolationMessage(MessageCode.BUS001, ce.getConstraintViolations(),
-					TextUtil.getLocale(headers.getAcceptableLanguages()));
-			return Response.status(Response.Status.BAD_REQUEST).entity(responseMessage).build();
-		}
-
-		boolean passwordVerified = false;
-		Account account = accountService.findByEmail(email);
-
-		if (account != null) {
-			passwordVerified = AuthUtil.verifyPassword(password.toCharArray(), account.getPassword());
-		}
-
-		// {"error":"invalid_grant","error_description":"The user is locked
-		// because of too many wrong passwords attempts. please contact the
-		// administrator."}
-		Map<String, String> responseObj = new HashMap<>();
-		if (account != null && passwordVerified) {
-			responseObj.put("access_token", "KuAmYgLk6H1D");
-			responseObj.put("token_type", "bearer");
-			responseObj.put("expires_in", "86399");
-			responseObj.put("appName", "sosa");
-			responseObj.put("username", "test@gmail.com");
-			responseObj.put("role", "User");
-			responseObj.put("firstName", "a");
-			responseObj.put("lastName", "b");
-			responseObj.put("fullName", "a b");
-			responseObj.put("accountId", "1");
-			builder = Response.status(Response.Status.OK).entity(responseObj);
-		} else {
-			ResponseMessage responseMessage = responseUtil.createResponseMessage(MessageCode.USR030,
-					TextUtil.getLocale(headers.getAcceptableLanguages()));
-			builder = Response.status(Response.Status.FORBIDDEN).entity(responseMessage);
-		}
-
-		return builder.build();
+		return account;
 	}
 
 	/**
@@ -184,16 +129,16 @@ public class AccountRest {
 	 * @throws ValidationException
 	 *             If account with the same email already exists
 	 */
-	private void validateAccount(NewAccount account, boolean isNewAccount) throws ConstraintViolationException, ValidationException {
+	private void validateAccount(CredentialsDto credentials) throws ConstraintViolationException, ValidationException {
 		// Create a bean validator and check for issues.
-		Set<ConstraintViolation<NewAccount>> violations = validator.validate(account);
+		Set<ConstraintViolation<CredentialsDto>> violations = validator.validate(credentials);
 
 		if (!violations.isEmpty()) {
 			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
 		}
 
 		// Check the uniqueness of the email address
-		if (isNewAccount && emailAlreadyExists(account.getEmail())) {
+		if (emailAlreadyExists(credentials.getUsername())) {
 			throw new ValidationException(MessageCode.USR050);
 		}
 	}

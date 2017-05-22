@@ -9,8 +9,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
-import com.dg.sample.i18.MessageCode;
-
 @RequestScoped
 public class ResponseUtil {
 
@@ -36,6 +34,8 @@ public class ResponseUtil {
 
 		for (ConstraintViolation<?> violation : violations) {
 			ResponsePropertyDetail messageDetail = new ResponsePropertyDetail();
+			System.out.println(violation);
+			System.out.println(violation.getMessage());
 			String message = resourceBundle.getString(violation.getMessage());
 
 			messageDetail.setError(violation.getMessage());

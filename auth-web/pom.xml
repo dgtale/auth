@@ -42,7 +42,13 @@
 			<type>ejb</type>
 			<scope>provided</scope>
 		</dependency>
-
+		
+		<!-- JWT -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.wildfly/wildfly-client-all -->
 		<dependency>
 			<groupId>org.wildfly</groupId>
@@ -108,6 +114,12 @@
 			</exclusions>
 		</dependency>
 
+		<!-- Test scope dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -1,17 +1,22 @@
-package com.dg.sample.validator;
+package com.dg.sample.dto.user;
+
+import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.Email;
 
 import com.dg.sample.i18.MessageCode;
 
-public class NewAccount {
+@XmlRootElement(name = "Credentials")
+@SuppressWarnings("serial")
+public class CredentialsDto implements Serializable {
 
-	@NotNull
+	@NotNull(message = MessageCode.BUS001)
 	@Email(message = MessageCode.USR001)
-	private String email;
+	private String username;
 
 	/**
 	 * Password hash
@@ -27,22 +32,23 @@ public class NewAccount {
 	 * $                 # end-of-string
 	 * </pre>
 	 */
-	@NotNull
+	@NotNull(message = MessageCode.BUS001)
 	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = MessageCode.USR003)
 	private String password;
 
+
 	/**
-	 * @return the email
+	 * @return the username
 	 */
-	public String getEmail() {
-		return email;
+	public String getUsername() {
+		return username;
 	}
 
 	/**
-	 * @param email the email to set
+	 * @param username the username to set
 	 */
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**
@@ -58,5 +64,4 @@ public class NewAccount {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 }
