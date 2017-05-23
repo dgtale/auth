@@ -99,10 +99,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		try {
 
 			Claims body = Jwts.parser().setSigningKey(getKey()).parseClaimsJws(token).getBody();
-			String subject = body.getSubject();
-			System.out.println(">>> subject "+subject);
+			String username = body.getSubject();
+			System.out.println(">>> subject "+username);
 			//OK, we can trust this JWT
-			userAuthenticatedEvent.fire(subject);
+			userAuthenticatedEvent.fire(username);
 
 		} catch (SignatureException e) {
 

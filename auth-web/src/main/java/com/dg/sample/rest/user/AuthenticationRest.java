@@ -2,6 +2,9 @@ package com.dg.sample.rest.user;
 
 import java.security.Key;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -126,8 +129,14 @@ public class AuthenticationRest {
 	private String issueToken(Account account) {
 //		Key key = MacProvider.generateKey();
 		Key key = getKey();
+		Calendar cal = GregorianCalendar.getInstance();
+		long now = cal.getTimeInMillis();
+		cal.add(Calendar.HOUR_OF_DAY, 24);
 
 		String compactJws = Jwts.builder()
+				.setIssuer("sample.com")
+				.setIssuedAt(new Date(now))
+				.setExpiration(cal.getTime())
 				.setSubject(account.getEmail())
 				.signWith(SignatureAlgorithm.HS512, key)
 				.compact();
