@@ -142,6 +142,12 @@
 				<version>${cache2k-version}</version>
 				<scope>runtime</scope>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>4.1</version>
+			</dependency>
 
 			<!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-jackson2-provider -->
 			<dependency>

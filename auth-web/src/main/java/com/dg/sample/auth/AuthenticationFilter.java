@@ -19,6 +19,8 @@ import javax.ws.rs.ext.Provider;
 
 import com.dg.sample.annotation.AuthenticatedUser;
 import com.dg.sample.annotation.Secured;
+import com.dg.sample.entity.user.Account;
+import com.dg.sample.service.AccountService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -28,10 +30,13 @@ import io.jsonwebtoken.SignatureException;
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
-	
+
+	@Inject
+	private AccountService accountService;
+
 	@Inject
 	@AuthenticatedUser
-	Event<String> userAuthenticatedEvent;
+	Event<Account> userAuthenticatedEvent;
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -51,63 +56,32 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		try {
 			// Validate the token
 			validateToken(token);
-
-//			setUserPrincipal(requestContext);
-		} catch (Exception e) {
+		} catch (SignatureException|SecurityException e) {
+			// Don't trust the JWT!
 			e.printStackTrace();
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+		} catch (Exception e) {
+			requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
 		}
 	}
 
-//	private void setUserPrincipal(ContainerRequestContext requestContext) {
-//		final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
-//		requestContext.setSecurityContext(new SecurityContext() {
-//
-//			@Override
-//			public Principal getUserPrincipal() {
-//
-//				return new Principal() {
-//
-//					@Override
-//					public String getName() {
-//						return username;
-//					}
-//				};
-//			}
-//
-//			@Override
-//			public boolean isUserInRole(String role) {
-//				return true;
-//			}
-//
-//			@Override
-//			public boolean isSecure() {
-//				return currentSecurityContext.isSecure();
-//			}
-//
-//			@Override
-//			public String getAuthenticationScheme() {
-//				return "Bearer";
-//			}
-//		});
-//	}
-
-	private void validateToken(String token) throws Exception {
+	private void validateToken(String token) throws SignatureException {
 		// Check if it was issued by the server and if it's not expired
 		// Throw an Exception if the token is invalid
+		Claims body = Jwts.parser().setSigningKey(getKey()).parseClaimsJws(token).getBody();
+		String username = body.getSubject();
+		System.out.println(">>> subject " + username);
 
-		try {
+		// OK, we can trust this JWT
 
-			Claims body = Jwts.parser().setSigningKey(getKey()).parseClaimsJws(token).getBody();
-			String username = body.getSubject();
-			System.out.println(">>> subject "+username);
-			//OK, we can trust this JWT
-			userAuthenticatedEvent.fire(username);
-
-		} catch (SignatureException e) {
-
-			//don't trust the JWT!
+		// Check if the user is known to our system and if it's still active
+		Account authenticatedUser = accountService.findByEmail(username);
+		if (authenticatedUser == null || !authenticatedUser.isApproved() || !authenticatedUser.isReady()) {
+			throw new SecurityException();
 		}
+		
+		// OK, the user is authenticated
+		userAuthenticatedEvent.fire(authenticatedUser);
 	}
 
 	public Key getKey() {

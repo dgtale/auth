@@ -150,7 +150,7 @@ public class AuthenticationRest {
 		return compactJws;
 	}
 
-	public Key getKey() {
+	private Key getKey() {
 		String encodedKey = "ooJXPj7xFYjo0pLDY1Rthg==";
 
 		// decode the base64 encoded string

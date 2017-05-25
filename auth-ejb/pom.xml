@@ -61,6 +61,13 @@
 <!-- 			<type>ejb</type> -->
 <!-- 		</dependency> -->
 
+		<!-- Cache -->
+		<dependency>
+			<groupId>org.cache2k</groupId>
+			<artifactId>cache2k-all</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
         <!-- Declare the APIs we depend on and need for compilation. All of 
             them are provided by JBoss WildFly -->
 

@@ -42,14 +42,20 @@
 			<type>ejb</type>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- JWT -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.wildfly/wildfly-client-all -->
+
+		<!-- Apache -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+		</dependency>
+
+		<!-- EJB client -->
 		<dependency>
 			<groupId>org.wildfly</groupId>
 			<artifactId>wildfly-client-all</artifactId>

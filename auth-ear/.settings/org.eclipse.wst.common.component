@@ -23,5 +23,8 @@
         <dependent-module archiveName="auth-ejb.jar" deploy-path="/" handle="module:/resource/auth-ejb/auth-ejb">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="cache2k-all.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/org/cache2k/cache2k-all/1.0.0.CR4/cache2k-all-1.0.0.CR4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
     </wb-module>
 </project-modules>

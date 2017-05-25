@@ -46,9 +46,9 @@ public class AccountRegistrationRest {
 	private AccountService accountService;
 
 	@GET
-	@Secured
+	@Secured({Role.Admin})
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Account> test() {
+	public List<Account> getAllAccounts() {
 		return accountService.findAllOrderedByEmail();
 	}
 
@@ -105,6 +105,9 @@ public class AccountRegistrationRest {
 		account.setEmail(credentials.getUsername());
 		account.setPassword(AuthUtil.passwordHash(credentials.getPassword().toCharArray()));
 		account.setRole(Role.User);
+		// TODO remove this when the email verification is in place
+		account.setApproved(Boolean.TRUE);
+		account.setReady(Boolean.TRUE);
 
 		return account;
 	}

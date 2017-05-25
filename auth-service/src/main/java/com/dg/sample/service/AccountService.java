@@ -6,12 +6,17 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 
 import com.dg.sample.dao.AccountDao;
+import com.dg.sample.data.AccountCache;
 import com.dg.sample.entity.user.Account;
 
 @Stateless
 public class AccountService {
+
+	@Inject
+	private AccountCache accountCache;
 
 	@EJB
 	private AccountDao accountDao;
@@ -23,7 +28,10 @@ public class AccountService {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public Account findByEmail(String email) {
-		return accountDao.findByEmail(email);
+
+		System.out.println(">>>>> findByEmail");
+
+		return accountCache.findByEmail(email);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -32,11 +40,17 @@ public class AccountService {
 	}
 
 	public Account register(String email, String password) throws Exception {
-		return accountDao.create(email, password);
+		Account account = accountDao.create(email, password);
+
+		accountCache.put(account);
+
+		return account;
 	}
 
 	public void register(Account account) throws Exception {
 		accountDao.create(account);
+
+		accountCache.put(account);
 	}
 
 }
