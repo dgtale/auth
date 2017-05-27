@@ -93,7 +93,7 @@ public class AccountRegistrationRest {
 			// Handle generic exceptions
 			responseMessage = responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(),
 					TextUtil.getLocale(headers.getAcceptableLanguages()));
-			builder = Response.status(Response.Status.BAD_REQUEST).entity(responseMessage);
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseMessage);
 		}
 
 		return builder.build();

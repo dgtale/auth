@@ -3,6 +3,8 @@ package com.dg.sample.i18;
 public interface MessageCode {
 	/** System exception */
 	String SYS001 = "SYS001";
+	/** Security exception */
+	String SEC001 = "SEC001";
 	/** Invalid data */
 	String BUS001 = "BUS001";
 	/** Email address format not valid */

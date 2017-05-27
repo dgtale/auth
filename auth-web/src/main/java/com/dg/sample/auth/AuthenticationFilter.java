@@ -3,13 +3,13 @@ package com.dg.sample.auth;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Base64;
+import java.util.Locale;
 
 import javax.annotation.Priority;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -20,6 +20,9 @@ import javax.ws.rs.ext.Provider;
 import com.dg.sample.annotation.AuthenticatedUser;
 import com.dg.sample.annotation.Secured;
 import com.dg.sample.entity.user.Account;
+import com.dg.sample.i18.MessageCode;
+import com.dg.sample.rest.ResponseMessage;
+import com.dg.sample.rest.ResponseUtil;
 import com.dg.sample.service.AccountService;
 
 import io.jsonwebtoken.Claims;
@@ -32,6 +35,9 @@ import io.jsonwebtoken.SignatureException;
 public class AuthenticationFilter implements ContainerRequestFilter {
 
 	@Inject
+	private ResponseUtil responseUtil;
+
+	@Inject
 	private AccountService accountService;
 
 	@Inject
@@ -40,28 +46,31 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-
-		// Get the HTTP Authorization header from the request
-		String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-
-		// Check if the HTTP Authorization header is present and formatted
-		// correctly
-		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-			throw new NotAuthorizedException("Authorization header must be provided");
-		}
-
-		// Extract the token from the HTTP Authorization header
-		String token = authorizationHeader.substring("Bearer".length()).trim();
-
 		try {
+			// Get the HTTP Authorization header from the request
+			String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+			validateHeader(authorizationHeader);
+
+			// Extract the token from the HTTP Authorization header
+			String token = authorizationHeader.substring("Bearer".length()).trim();
+
 			// Validate the token
 			validateToken(token);
-		} catch (SignatureException|SecurityException e) {
+		} catch (SignatureException | SecurityException e) {
 			// Don't trust the JWT!
-			e.printStackTrace();
-			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+			ResponseMessage responseMessage =
+					responseUtil.createResponseMessage(MessageCode.SEC001, e.getMessage(), Locale.ENGLISH);
+			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(responseMessage).build());
 		} catch (Exception e) {
-			requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
+			ResponseMessage responseMessage =
+					responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(), Locale.ENGLISH);
+			requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseMessage).build());
+		}
+	}
+
+	private void validateHeader(String authorizationHeader) {
+		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+			throw new SecurityException("Authorization header must be provided");
 		}
 	}
 
@@ -77,9 +86,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		// Check if the user is known to our system and if it's still active
 		Account authenticatedUser = accountService.findByEmail(username);
 		if (authenticatedUser == null || !authenticatedUser.isApproved() || !authenticatedUser.isReady()) {
-			throw new SecurityException();
+			throw new SecurityException("Unknown user or user not allowed to use the application");
 		}
-		
+
 		// OK, the user is authenticated
 		userAuthenticatedEvent.fire(authenticatedUser);
 	}

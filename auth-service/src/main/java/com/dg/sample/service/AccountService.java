@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import com.dg.sample.dao.AccountDao;
@@ -21,12 +19,12 @@ public class AccountService {
 	@EJB
 	private AccountDao accountDao;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+//	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public Account findById(Long id) {
 		return accountDao.findById(id);
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+//	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public Account findByEmail(String email) {
 
 		System.out.println(">>>>> findByEmail");
@@ -34,7 +32,7 @@ public class AccountService {
 		return accountCache.findByEmail(email);
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+//	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<Account> findAllOrderedByEmail() {
 		return accountDao.findAllOrderedByEmail();
 	}

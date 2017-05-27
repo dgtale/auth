@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -23,11 +24,17 @@ import com.dg.sample.annotation.AuthenticatedUser;
 import com.dg.sample.annotation.Secured;
 import com.dg.sample.entity.user.Account;
 import com.dg.sample.entity.user.Role;
+import com.dg.sample.i18.MessageCode;
+import com.dg.sample.rest.ResponseMessage;
+import com.dg.sample.rest.ResponseUtil;
 
 @Secured
 @Provider
 @Priority(Priorities.AUTHORIZATION)
 public class AuthorizationFilter implements ContainerRequestFilter {
+
+	@Inject
+	private ResponseUtil responseUtil;
 
 	@Context
 	private ResourceInfo resourceInfo;
@@ -58,10 +65,14 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 			}
 
 		} catch (SecurityException e) {
-			requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
+			ResponseMessage responseMessage =
+					responseUtil.createResponseMessage(MessageCode.SEC001, e.getMessage(), Locale.ENGLISH);
+			requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).entity(responseMessage).build());
 		} catch (Exception e) {
 			e.printStackTrace();
-			requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
+			ResponseMessage responseMessage =
+					responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(), Locale.ENGLISH);
+			requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseMessage).build());
 		}
 	}
 
@@ -83,7 +94,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 	private void checkPermissions(List<Role> allowedRoles) throws Exception {
 		if (CollectionUtils.isNotEmpty(allowedRoles)) {
 			if (!allowedRoles.contains(authenticatedUser.getRole())) {
-				throw new SecurityException();
+				throw new SecurityException("User not authorized for this operation");
 			}
 		}
 	}

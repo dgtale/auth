@@ -89,7 +89,9 @@ public class AuthenticationRest {
 					TextUtil.getLocale(headers.getAcceptableLanguages()));
 			return Response.status(Response.Status.UNAUTHORIZED).entity(responseMessage).build();
 		} catch (Exception e) {
-			return Response.status(Response.Status.UNAUTHORIZED).build();
+			ResponseMessage responseMessage = responseUtil.createResponseMessage(e.getMessage(),
+					TextUtil.getLocale(headers.getAcceptableLanguages()));
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseMessage).build();
 		}
 	}
 
