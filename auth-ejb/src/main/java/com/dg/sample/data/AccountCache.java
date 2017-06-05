@@ -26,6 +26,7 @@ public class AccountCache {
 		.loader(new CacheLoader<String, Account>() {
 			@Override
 			public Account load(final String key) throws Exception {
+				System.out.println(">>>>> findByEmail via cache loader");
 				return accountDao.findByEmail(key);
 			}
 		})

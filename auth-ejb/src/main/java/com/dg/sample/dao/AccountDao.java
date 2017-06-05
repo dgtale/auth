@@ -62,6 +62,8 @@ public class AccountDao {
 		user.setId(account.getId());
 
 		em.persist(user);
+		
+		account.setUser(user);
 	}
 
 	public Account create(String email, String password) throws Exception {
@@ -69,8 +71,8 @@ public class AccountDao {
 		account.setEmail(email);
 		account.setPassword(password);
 		account.setRole(Role.User);
-
-		em.persist(account);
+		
+		create(account);
 
 		return account;
 	}

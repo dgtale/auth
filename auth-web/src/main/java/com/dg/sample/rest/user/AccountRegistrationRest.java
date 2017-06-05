@@ -3,6 +3,8 @@ package com.dg.sample.rest.user;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -35,6 +37,8 @@ import com.dg.sample.util.AuthUtil;
 @Path("/accounts")
 @RequestScoped
 public class AccountRegistrationRest {
+	@Inject
+	private Logger log;
 
 	@Inject
 	private Validator validator;
@@ -48,8 +52,21 @@ public class AccountRegistrationRest {
 	@GET
 	@Secured({Role.Admin})
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Account> getAllAccounts() {
-		return accountService.findAllOrderedByEmail();
+	public Response getAllAccounts(@Context HttpHeaders headers) {
+		ResponseMessage responseMessage = null;
+		Response.ResponseBuilder builder = null;
+		try {
+			List<Account> responseObj = accountService.findAllOrderedByEmail();
+			builder = Response.status(Response.Status.OK).entity(responseObj);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Exception while getting all users", e);
+
+			// Handle generic exceptions
+			responseMessage = responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(),
+					TextUtil.getLocale(headers.getAcceptableLanguages()));
+			builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseMessage);
+		}
+		return builder.build();
 	}
 
 	/**
@@ -90,6 +107,8 @@ public class AccountRegistrationRest {
 					TextUtil.getLocale(headers.getAcceptableLanguages()));
 			builder = Response.status(Response.Status.CONFLICT).entity(responseMessage);
 		} catch (Exception e) {
+			log.log(Level.SEVERE, "Exception while creating a new account", e);
+
 			// Handle generic exceptions
 			responseMessage = responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(),
 					TextUtil.getLocale(headers.getAcceptableLanguages()));

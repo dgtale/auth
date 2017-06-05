@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -32,6 +34,8 @@ import com.dg.sample.rest.ResponseUtil;
 @Provider
 @Priority(Priorities.AUTHORIZATION)
 public class AuthorizationFilter implements ContainerRequestFilter {
+	@Inject
+	private Logger log;
 
 	@Inject
 	private ResponseUtil responseUtil;
@@ -69,7 +73,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 					responseUtil.createResponseMessage(MessageCode.SEC001, e.getMessage(), Locale.ENGLISH);
 			requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).entity(responseMessage).build());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.SEVERE, "Exception while authorization check", e);
 			ResponseMessage responseMessage =
 					responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(), Locale.ENGLISH);
 			requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseMessage).build());

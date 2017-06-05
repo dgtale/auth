@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.Priority;
 import javax.crypto.SecretKey;
@@ -33,6 +35,8 @@ import io.jsonwebtoken.SignatureException;
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
+	@Inject
+	private Logger log;
 
 	@Inject
 	private ResponseUtil responseUtil;
@@ -62,6 +66,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 					responseUtil.createResponseMessage(MessageCode.SEC001, e.getMessage(), Locale.ENGLISH);
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(responseMessage).build());
 		} catch (Exception e) {
+			log.log(Level.SEVERE, "Exception while authentication check", e);
 			ResponseMessage responseMessage =
 					responseUtil.createResponseMessage(MessageCode.SYS001, e.getMessage(), Locale.ENGLISH);
 			requestContext.abortWith(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseMessage).build());
@@ -78,6 +83,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		// Check if it was issued by the server and if it's not expired
 		// Throw an Exception if the token is invalid
 		Claims body = Jwts.parser().setSigningKey(getKey()).parseClaimsJws(token).getBody();
+		if (body.getExpiration() == null || body.getExpiration().getTime() < System.currentTimeMillis()) {
+			throw new SecurityException("Token expired");
+		}
+
 		String username = body.getSubject();
 		System.out.println(">>> subject " + username);
 

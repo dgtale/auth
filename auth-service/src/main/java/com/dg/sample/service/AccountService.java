@@ -26,9 +26,6 @@ public class AccountService {
 
 //	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public Account findByEmail(String email) {
-
-		System.out.println(">>>>> findByEmail");
-
 		return accountCache.findByEmail(email);
 	}
 
